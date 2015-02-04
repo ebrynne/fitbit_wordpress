@@ -14,8 +14,7 @@ function fw_create_menu() {
 
 function register_mysettings() {
   //register our settings
-  register_setting( 'fw-settings-group', 'fw_secret' );
-  register_setting( 'fw-settings-group', 'fw_key' );
+  register_setting( 'fw-settings-group', 'fitbit_userid' );
 }
 
 function fw_settings_page() {
@@ -23,20 +22,14 @@ function fw_settings_page() {
 <div class="wrap">
 <h2>Fitbit Wordpress Settings</h2>
 
-<form method="post" action="fitbit_wordpress">
+<form method="post" action="fitbit_wordpress.php">
     <?php settings_fields( 'fw-settings-group' ); ?>
     <?php do_settings_sections( 'fw-settings-group' ); ?>
     <table class="form-table">
         <tr valign="top">
-        <th scope="row">Fitbit Secret</th>
-        <td><input type="text" name="fw_secret" value="<?php echo esc_attr( get_option('fw_secret') ); ?>" /></td>
+        <th scope="row">Fitbit UserID</th>
+        <td><input type="text" name="fitbit_userid" value="<?php echo esc_attr( get_option('fitbit_userid') ); ?>" /></td>
         </tr>
-         
-        <tr valign="top">
-        <th scope="row">Fitbit Key</th>
-        <td><input type="text" name="fw_key" value="<?php echo esc_attr( get_option('fw_key') ); ?>" /></td>
-        </tr>
-        
     </table>
     
     <?php submit_button(); ?>
