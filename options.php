@@ -27,8 +27,8 @@ function fw_settings_page() {
     <?php do_settings_sections( 'fw-settings-group' ); ?>
     <table class="form-table">
         <tr valign="top">
-        <th scope="row">Fitbit UserID</th>
-        <td><input type="text" name="fitbit_userid" value="<?php echo esc_attr( get_option('fitbit_userid') ); ?>" /></td>
+          <th scope="row">Fitbit UserID</th>
+          <td><input type="text" name="fitbit_userid" value="<?php echo esc_attr( get_option('fitbit_userid') ); ?>" /></td>
         </tr>
     </table>
     

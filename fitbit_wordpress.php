@@ -10,12 +10,21 @@
  */
 include_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php' );
 include(plugin_dir_path( __FILE__ ) . "options.php");
-
-$fbwp_key = "";
-$fbwp_secret = "";
+include(plugin_dir_path( __FILE__ ) . "oauth/oauth.php");
 
 function activity_graph( $atts ) {
-    return '<canvas id="myChart" width="400" height="400"></canvas>';
+  $oauthObject = new OAuthSimple();
+  $signatures = array( 'consumer_key'     => '03db1b39c37745bcb73c1d2227563b8a',
+                       'shared_secret'    => '70418c0584a346e3ba1e1e599d95259b');
+  $result = $oauthObject->sign(array(
+        'path'      =>'https://api.fitbit.com/1/user/2G99JL/sleep/minutesAsleep/date/2010-08-31/today.json',
+        'signatures'=> $signatures));
+  $ch = curl_init();
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_URL, $result['signed_url']);
+    $r = curl_exec($ch);
+    curl_close($ch);
+    return $result;
 }
 
 function add_fbwp_js_dependencies() {
@@ -26,39 +35,17 @@ function add_fbwp_js_dependencies() {
 }
 
 function add_fbwp_js_source() {
-  ?>
-  <script type="text/javascript">
-    $(document).ready ( function(){
-      var ctx = document.getElementById("myChart").getContext("2d");
-      var data = {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [
-          {
-            label: "My First dataset",
-            fillColor: "rgba(220,220,220,0.2)",
-            strokeColor: "rgba(220,220,220,1)",
-            pointColor: "rgba(220,220,220,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(220,220,220,1)",
-            data: [65, 59, 80, 81, 56, 55, 40]
-          },
-          {
-            label: "My Second dataset",
-            fillColor: "rgba(151,187,205,0.2)",
-            strokeColor: "rgba(151,187,205,1)",
-            pointColor: "rgba(151,187,205,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(151,187,205,1)",
-            data: [28, 48, 40, 19, 86, 27, 90]
-          }
-        ]
-      };
-      var myLineChart = new Chart(ctx).Line(data);
-    });​
-  </script>
-  <?php
+  wp_enqueue_script(
+    'fitbit_wordpress',
+    plugins_url( 'js/fbwp_source.js' , __FILE__ ),
+    array( 'jquery' )
+  );
+
+  wp_enqueue_script(
+    'fitbit_wordpress_oauth',
+    plugins_url( 'js/oauth.js' , __FILE__ ),
+    array( 'jquery' )
+  );
 }
 
 add_action('wp_head', 'add_fbwp_js_dependencies');
